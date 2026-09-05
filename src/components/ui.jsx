@@ -1,136 +1,307 @@
 "use client";
 
-export function Button({ children, variant = "primary", className = "", loading = false, ...props }) {
+export function Button({
+  children,
+  variant = "primary",
+  className = "",
+  loading = false,
+  ...props
+}) {
   const styles = {
-    // Neon mint green with high-contrast black text (matches "Launch app" button in part1_2.png)
-    primary: "bg-[#2EE884] text-black shadow-sm hover:bg-[#25C870] hover:shadow-[0_4px_14px_rgba(46,232,132,0.3)]",
-    // Clean white button with gray border
-    secondary: "bg-white text-slate-900 border border-slate-200 hover:bg-slate-50 hover:border-slate-300",
-    danger: "bg-red-50 text-red-600 border border-red-100 hover:bg-red-100",
-    ghost: "bg-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-100",
+    primary:
+      "bg-[#063B2D] text-white hover:bg-[#07503D]",
+    secondary:
+      "border border-[#D9E3DE] bg-white text-[#0B1F18] hover:bg-[#F4F8F5]",
+    danger:
+      "border border-red-200 bg-red-50 text-red-700 hover:bg-red-100",
+    ghost:
+      "bg-transparent text-[#64706A] hover:bg-[#EEF3F0] hover:text-[#0B1F18]",
   };
+
   return (
     <button
       disabled={loading || props.disabled}
-      className={`inline-flex items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${styles[variant]} ${className}`}
+      className={[
+        "inline-flex items-center justify-center",
+        "rounded-lg px-4 py-2 text-xs font-semibold",
+        "transition-colors",
+        "disabled:cursor-not-allowed disabled:opacity-50",
+        styles[variant],
+        className,
+      ].join(" ")}
       {...props}
     >
-      {loading ? "Working…" : children}
+      {loading ? "Working..." : children}
     </button>
   );
 }
 
-export function Field({ label, error, hint, children }) {
+export function Field({
+  label,
+  error,
+  hint,
+  children,
+}) {
   return (
     <div className="space-y-1.5">
-      <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{label}</label>
+      <label className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#64706A]">
+        {label}
+      </label>
+
       {children}
-      {hint && !error && <p className="text-xs text-slate-500">{hint}</p>}
-      {error && <p className="text-xs text-red-500">{error}</p>}
+
+      {hint && !error && (
+        <p className="text-[10px] text-[#7B8982]">
+          {hint}
+        </p>
+      )}
+
+      {error && (
+        <p className="text-[10px] text-red-500">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
 
-const inputClasses = "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-[#2EE884] focus:ring-4 focus:ring-[#2EE884]/20 shadow-sm";
+const inputClasses = [
+  "w-full rounded-lg border border-[#DCE5E0]",
+  "bg-white px-3.5 py-2.5",
+  "text-xs text-[#0B1F18]",
+  "outline-none transition",
+  "placeholder:text-[#A1ADA7]",
+  "focus:border-[#10B981]",
+  "focus:ring-2 focus:ring-[#10B981]/10",
+].join(" ");
 
 export function Input(props) {
-  return <input className={inputClasses} {...props} />;
+  return (
+    <input
+      className={inputClasses}
+      {...props}
+    />
+  );
 }
 
 export function Textarea(props) {
-  return <textarea className={`min-h-32 resize-y ${inputClasses}`} {...props} />;
+  return (
+    <textarea
+      className={`${inputClasses} min-h-28 resize-y`}
+      {...props}
+    />
+  );
 }
 
 export function Select(props) {
-  return <select className={inputClasses} {...props} />;
+  return (
+    <select
+      className={inputClasses}
+      {...props}
+    />
+  );
 }
 
-export function Badge({ children, tone = "neutral" }) {
+export function Badge({
+  children,
+  tone = "neutral",
+}) {
   const tones = {
-    neutral: "border-slate-200 bg-slate-50 text-slate-600",
-    green: "border-[#2EE884]/30 bg-[#2EE884]/10 text-emerald-800",
-    amber: "border-amber-200 bg-amber-50 text-amber-700",
-    red: "border-red-200 bg-red-50 text-red-700",
-    blue: "border-blue-200 bg-blue-50 text-blue-700",
+    neutral:
+      "border-[#DCE5E0] bg-[#F5F8F6] text-[#64706A]",
+    green:
+      "border-[#BFE8D3] bg-[#E5F7ED] text-[#087653]",
+    amber:
+      "border-[#F0D8A7] bg-[#FFF5E2] text-[#98651A]",
+    red:
+      "border-red-200 bg-red-50 text-red-700",
+    blue:
+      "border-blue-200 bg-blue-50 text-blue-700",
   };
+
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${tones[tone] || tones.neutral}`}>
-      {tone === 'green' && <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />}
+    <span
+      className={[
+        "inline-flex items-center gap-1.5 rounded-full border",
+        "px-2 py-1 text-[8px] font-semibold",
+        tones[tone] || tones.neutral,
+      ].join(" ")}
+    >
+      {tone === "green" && (
+        <span className="h-1.5 w-1.5 rounded-full bg-[#10B981]" />
+      )}
+
       {children}
     </span>
   );
 }
 
-export function Loading({ text = "Loading…" }) {
+export function Loading({
+  text = "Loading...",
+}) {
   return (
-    <div className="flex flex-col items-center justify-center p-12 text-slate-500 rounded-3xl border border-slate-200 bg-white shadow-sm">
-      <div className="h-6 w-6 border-2 border-[#2EE884] border-t-transparent rounded-full animate-[spin_1s_linear_infinite] mb-4" />
-      <span className="text-sm font-medium">{text}</span>
+    <div className="flex min-h-[300px] flex-col items-center justify-center">
+      <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#DCE5E0] border-t-[#063B2D]" />
+
+      <span className="mt-3 text-xs text-[#718078]">
+        {text}
+      </span>
     </div>
   );
 }
 
-export function ErrorState({ error, retry }) {
+export function ErrorState({
+  error,
+  retry,
+}) {
   return (
-    <div className="rounded-3xl border border-red-100 bg-red-50 p-8 text-center">
-      <p className="font-semibold text-red-800">Unable to load this section.</p>
-      <p className="mt-1 text-sm text-red-600">{error?.message || "Please try again."}</p>
-      {retry && <Button variant="secondary" className="mt-4 border-red-200 text-red-700 hover:bg-red-100" onClick={retry}>Retry</Button>}
+    <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
+      <p className="text-sm font-semibold text-red-800">
+        Unable to load this section.
+      </p>
+
+      <p className="mt-1 text-xs text-red-600">
+        {error?.message || "Please try again."}
+      </p>
+
+      {retry && (
+        <Button
+          variant="secondary"
+          className="mt-4"
+          onClick={retry}
+        >
+          Retry
+        </Button>
+      )}
     </div>
   );
 }
 
-export function EmptyState({ title, description, action }) {
+export function EmptyState({
+  title,
+  description,
+  action,
+}) {
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
-      <p className="font-semibold text-slate-900">{title}</p>
-      <p className="mt-2 text-sm text-slate-500">{description}</p>
-      {action && <div className="mt-6 flex justify-center">{action}</div>}
-    </div>
-  );
-}
+    <div className="rounded-2xl border border-[#E1E8E3] bg-white p-8 text-center">
+      <p className="text-sm font-semibold text-[#0B1F18]">
+        {title}
+      </p>
 
-export function Modal({ open, title, children, onClose }) {
-  if (!open) return null;
-  return (
-    <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm" onMouseDown={onClose}>
-      <div className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-[2rem] border border-slate-200 bg-white p-6 shadow-2xl" onMouseDown={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-4">
-          <h2 className="text-lg font-bold tracking-tight text-slate-900">{title}</h2>
-          <button className="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors" onClick={onClose} aria-label="Close">×</button>
+      <p className="mt-1.5 text-xs text-[#718078]">
+        {description}
+      </p>
+
+      {action && (
+        <div className="mt-5 flex justify-center">
+          {action}
         </div>
-        <div className="mt-6">{children}</div>
+      )}
+    </div>
+  );
+}
+
+export function Modal({
+  open,
+  title,
+  children,
+  onClose,
+}) {
+  if (!open) return null;
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#063B2D]/20 p-4 backdrop-blur-sm"
+      onMouseDown={onClose}
+    >
+      <div
+        className="max-h-[90vh] w-full max-w-lg overflow-auto rounded-2xl border border-[#E1E8E3] bg-white p-5 shadow-xl"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-[#EDF1EE] pb-3">
+          <h2 className="text-sm font-bold text-[#0B1F18]">
+            {title}
+          </h2>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg p-1.5 text-[#8A9690] hover:bg-[#F2F5F3]"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="mt-5">
+          {children}
+        </div>
       </div>
     </div>
   );
 }
 
-export function StatCard({ label, value, description }) {
+export function StatCard({
+  label,
+  value,
+  description,
+}) {
   return (
-    <div className="p-6">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{label}</p>
-      <p className="mt-2 text-4xl font-semibold tracking-tight text-slate-900">{value}</p>
-      {description && <p className="mt-1 text-xs text-slate-500">{description}</p>}
+    <div className="rounded-xl border border-[#E1E8E3] bg-white px-4 py-3">
+      <p className="text-[8px] font-semibold uppercase tracking-[0.08em] text-[#718078]">
+        {label}
+      </p>
+
+      <p className="mt-1 text-[18px] font-bold tracking-tight text-[#0B1F18]">
+        {value}
+      </p>
+
+      {description && (
+        <p className="mt-0.5 text-[9px] text-[#718078]">
+          {description}
+        </p>
+      )}
     </div>
   );
 }
 
-export function StatRow({ children }) {
+export function StatRow({
+  children,
+}) {
   return (
-    <div className="grid rounded-[2rem] border border-slate-200 bg-white divide-y divide-slate-100 sm:grid-cols-2 sm:divide-x sm:divide-y-0 xl:grid-cols-5 shadow-sm overflow-hidden">
+    <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
       {children}
     </div>
   );
 }
 
-export function PageHeader({ eyebrow, title, description, action }) {
+export function PageHeader({
+  eyebrow,
+  title,
+  description,
+  action,
+}) {
   return (
-    <div className="mb-10 flex flex-col gap-4 border-b border-slate-200 pb-8 sm:flex-row sm:items-end sm:justify-between relative z-10">
+    <div className="mb-5 flex flex-col gap-3 border-b border-[#E1E8E3] pb-5 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        {eyebrow && <p className="text-[10px] font-bold uppercase tracking-widest text-[#25C870] mb-3">{eyebrow}</p>}
-        <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">{title}</h1>
-        {description && <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-500">{description}</p>}
+        {eyebrow && (
+          <p className="mb-1.5 text-[8px] font-semibold uppercase tracking-[0.12em] text-[#087653]">
+            {eyebrow}
+          </p>
+        )}
+
+        <h1 className="text-2xl font-bold tracking-tight text-[#0B1F18]">
+          {title}
+        </h1>
+
+        {description && (
+          <p className="mt-1.5 max-w-2xl text-xs leading-5 text-[#718078]">
+            {description}
+          </p>
+        )}
       </div>
+
       {action && <div>{action}</div>}
     </div>
   );

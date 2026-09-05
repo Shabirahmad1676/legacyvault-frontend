@@ -70,16 +70,15 @@ export function useUpdateQuorum() {
 export function useAssignedVaults() {
   return useQuery({
     queryKey: ["assignedVaults"],
-    queryFn: async () => {
-      const token = localStorage.getItem("legacyvault_token"); // Adjust based on your auth setup
-      const res = await fetch("http://localhost:5000/api/trusted-contacts/assigned-vaults", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!res.ok) throw new Error("Failed to fetch assigned vaults");
-      const json = await res.json();
-      return json.data;
-    },
+    queryFn: async () => data(await contacts.getAssignedVaults())
+  });
+} 
+
+export function useSharedVaultItems(owner_id) {
+  return useQuery({
+    queryKey: ["sharedVaultItems", owner_id],
+    queryFn: () => vault.getSharedItems(owner_id),
+    select: data,
+    enabled: !!owner_id, 
   });
 }
