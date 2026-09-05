@@ -33,7 +33,7 @@ export default function SharedVaultView() {
         }
       />
       
-      {q.data?.length === 0 ? (
+      {!q.data?.length ? (
         <EmptyState
           title="No accessible items."
           description="This vault contains no 'always visible' items, and you do not have an approved emergency access request."

@@ -78,13 +78,11 @@ export default function RequestDetails() {
         </div>
        <div className="lv-card p-6">
   <QuorumProgress
-    approvals={approvals}
-    threshold={threshold}
-    totalContacts={
-      r.TrustedContact?.vault_owner?.TrustedContacts?.length || 0
-    }
-    status={r.status}
-  />
+  approvals={approvals}
+  threshold={threshold}
+  totalContacts={0}
+  status={r.status}
+/>
   
   {/* New Vote Visibility Section */}
   <div className="mt-8 border-t border-slate-100 pt-6">
