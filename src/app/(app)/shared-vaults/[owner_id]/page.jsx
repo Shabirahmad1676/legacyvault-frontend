@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useSharedVaultItems } from "../../../../hooks/useLegacyVault";
-import { PageHeader, Button, Loading, ErrorState, EmptyState, Badge, Modal } from "../../../../components/ui";
+import { useSharedVaultItems } from "@/hooks/useLegacyVault";
+import { PageHeader, Button, Loading, ErrorState, EmptyState, Badge, Modal } from "@/components/ui";
 
 const labels = {
   password: "Password",

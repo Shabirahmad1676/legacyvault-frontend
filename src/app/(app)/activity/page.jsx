@@ -4,8 +4,8 @@ import {
   Loading,
   ErrorState,
   EmptyState,
-} from "../../../components/ui";
-import { useActivityLogs } from "../../../hooks/useLegacyVault";
+} from "@/components/ui";
+import { useActivityLogs } from "@/hooks/useLegacyVault";
 export default function Activity() {
   const q = useActivityLogs();
   if (q.isLoading) return <Loading text="Loading activity…" />;

@@ -3,7 +3,7 @@ import { useParams, useRouter } from "next/navigation";
 import {
   useAccessRequestsToVote,
   useVoteOnAccessRequest,
-} from "../../../../hooks/useLegacyVault";
+} from "@/hooks/useLegacyVault";
 import {
   PageHeader,
   Button,
@@ -11,8 +11,8 @@ import {
   ErrorState,
   Badge,
   Modal,
-} from "../../../../components/ui";
-import { QuorumProgress } from "../../../../components/QuorumProgress";
+} from "@/components/ui";
+import { QuorumProgress } from "@/components/QuorumProgress";
 import { useState } from "react";
 export default function RequestDetails() {
   const { id } = useParams(),

@@ -2,13 +2,13 @@
 
 import { Formik } from "formik";
 import { useState } from "react";
-import { contactSchema } from "../../../schemas/forms";
+import { contactSchema } from "@/schemas/forms";
 
 import {
   useTrustedContacts,
   useAddTrustedContact,
   useRemoveTrustedContact,
-} from "../../../hooks/useLegacyVault";
+} from "@/hooks/useLegacyVault";
 
 import {
   PageHeader,
@@ -18,7 +18,7 @@ import {
   Loading,
   ErrorState,
   EmptyState,
-} from "../../../components/ui";
+} from "@/components/ui";
 
 /* -------------------------------------------------------------------------- */
 /* Icons                                                                      */

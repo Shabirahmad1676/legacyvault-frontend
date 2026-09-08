@@ -12,7 +12,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import * as Yup from "yup";
-import { forgotPassword } from "../../api/auth";
+import { forgotPassword } from "@/api/auth";
 
 const schema = Yup.object({
   email: Yup.string()

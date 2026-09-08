@@ -1,15 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Formik } from "formik";
-import { getUser, setSession } from "../../../../lib/auth";
-import { updateQuorum } from "../../../../api/auth";
-import { useTrustedContacts } from "../../../../hooks/useLegacyVault";
+import { getUser, setSession } from "@/lib/auth";
+import { updateQuorum } from "@/api/auth";
+import { useTrustedContacts } from "@/hooks/useLegacyVault";
 import {
   PageHeader,
   Field,
   Input,
   Button,
-} from "../../../../components/ui";
+} from "@/components/ui";
 export default function Security() {
   const u = getUser(),
     c = useTrustedContacts(),

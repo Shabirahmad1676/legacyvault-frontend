@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { PageHeader, Loading, ErrorState, EmptyState, Badge } from "../../../components/ui";
-import { useAssignedVaults } from "../../../hooks/useLegacyVault";
+import { PageHeader, Loading, ErrorState, EmptyState, Badge } from "@/components/ui";
+import { useAssignedVaults } from "@/hooks/useLegacyVault";
 
 export default function SharedVaultsList() {
   const q = useAssignedVaults();

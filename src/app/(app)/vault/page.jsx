@@ -11,23 +11,23 @@ import {
 
 import {
   useVaultItems,
-} from "../../../hooks/useLegacyVault";
+} from "@/hooks/useLegacyVault";
 
 import {
   Loading,
   ErrorState,
   EmptyState,
-} from "../../../components/ui";
+} from "@/components/ui";
 
 import {
   VaultItemRow,
-} from "../../../components/vault/VaultItemRow";
+} from "@/components/vault/VaultItemRow";
 
 import {
   VaultListMotion,
   VaultItemMotion,
   VaultPageMotion,
-} from "../../../components/vault/VaultPageMotion";
+} from "@/components/vault/VaultPageMotion";
 
 const filters = [
   {

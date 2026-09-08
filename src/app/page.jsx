@@ -1922,8 +1922,8 @@ export default function Home() {
 
             <FadeUp delay={0.08}>
               <h1 className="mx-auto mt-7 max-w-5xl text-5xl font-semibold leading-[0.98] tracking-[-0.055em] text-[#0B1F18] sm:text-6xl lg:text-[82px]">
-                What matters most shouldn't depend on{" "}
-                <span className="text-slate-400">one person.</span>
+                Your legacy, under trusted{" "}
+                <span className="text-slate-400">control.</span>
               </h1>
             </FadeUp>
 

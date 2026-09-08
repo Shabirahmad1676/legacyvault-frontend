@@ -9,14 +9,14 @@ import {
   User,
 } from "lucide-react";
 
-import AuthLayout from "../../components/auth/AuthLayout";
-import AuthInput from "../../components/auth/AuthInput";
-import PasswordInput from "../../components/auth/PasswordInput";
-import AuthButton from "../../components/auth/AuthButton";
+import AuthLayout from "@/components/auth/AuthLayout";
+import AuthInput from "@/components/auth/AuthInput";
+import PasswordInput from "@/components/auth/PasswordInput";
+import AuthButton from "@/components/auth/AuthButton";
 
-import { signup } from "../../api/auth";
-import { setSession } from "../../lib/auth";
-import { signupSchema } from "../../schemas/forms";
+import { signup } from "@/api/auth";
+import { setSession } from "@/lib/auth";
+import { signupSchema } from "@/schemas/forms";
 
 export default function SignupPage() {
   const router = useRouter();
