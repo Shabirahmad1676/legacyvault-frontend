@@ -1,9 +1,9 @@
 "use client";
 import { Formik } from "formik";
 import { useRouter } from "next/navigation";
-import { requestSchema } from "../../../../schemas/forms";
-import { useCreateAccessRequest, useAssignedVaults } from "../../../../hooks/useLegacyVault";
-import { PageHeader, Field, Select, Textarea, Button, Loading, ErrorState } from "../../../../components/ui";
+import { requestSchema } from "@/schemas/forms";
+import { useCreateAccessRequest, useAssignedVaults } from "@/hooks/useLegacyVault";
+import { PageHeader, Field, Select, Textarea, Button, Loading, ErrorState } from "@/components/ui";
 
 export default function NewRequest() {
   const router = useRouter();

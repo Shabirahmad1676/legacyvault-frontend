@@ -13,16 +13,16 @@ import {
   Loading,
   ErrorState,
   Badge,
-} from "../../../components/ui";
+} from "@/components/ui";
 
 import {
   useVaultItems,
   useTrustedContacts,
   useIncomingAccessRequests,
   useAccessRequestsToVote,
-} from "../../../hooks/useLegacyVault";
+} from "@/hooks/useLegacyVault";
 
-import { getUser } from "../../../lib/auth";
+import { getUser } from "@/lib/auth";
 
 function StatCard({ label, value, suffix }) {
   return (

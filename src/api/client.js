@@ -1,9 +1,13 @@
-import { getToken, clearSession } from "../lib/auth";
+import { getToken, clearSession } from "@/lib/auth";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
 
 export async function apiRequest(path, options = {}) {
-  const headers = { ...(options.body ? { "Content-Type": "application/json" } : {}), ...(options.headers || {}) };
+  const headers = { 
+    ...(options.body ? { "Content-Type": "application/json" } : {}), 
+    ...(options.headers || {}) 
+  };
+  
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
 
@@ -13,8 +17,17 @@ export async function apiRequest(path, options = {}) {
     cache: "no-store"
   });
 
-  let payload = null;
-  try { payload = await response.json(); } catch {}
+  // ✅ Fix: Initialize as an empty object structure to prevent deep downstream undefined crashes
+  let payload = { data: [] }; 
+  try { 
+    const textData = await response.text();
+    // Only attempt JSON parsing if there is an actual text payload present
+    if (textData) {
+      payload = JSON.parse(textData);
+    }
+  } catch (err) {
+    console.warn("Failed to parse response payload layout:", err);
+  }
 
   if (response.status === 401) {
     clearSession();
@@ -29,5 +42,6 @@ export async function apiRequest(path, options = {}) {
     error.payload = payload;
     throw error;
   }
+  
   return payload;
 }

@@ -13,7 +13,7 @@ import {
   AlertCircle,
   CheckCircle2,
 } from "lucide-react";
-import { resetPassword } from "../../api/auth";
+import { resetPassword } from "@/api/auth";
 
 const schema = Yup.object({
   password: Yup.string()

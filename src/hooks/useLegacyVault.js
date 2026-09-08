@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import * as auth from "../api/auth";
-import * as vault from "../api/vault";
-import * as contacts from "../api/trustedContacts";
-import * as requests from "../api/accessRequests";
-import * as votes from "../api/votes";
-import * as activity from "../api/activityLogs";
+import * as auth from "@/api/auth";
+import * as vault from "@/api/vault";
+import * as contacts from "@/api/trustedContacts";
+import * as requests from "@/api/accessRequests";
+import * as votes from "@/api/votes";
+import * as activity from "@/api/activityLogs";
 
 const data = (p) => p?.data ?? [];
 

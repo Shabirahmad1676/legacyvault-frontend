@@ -6,11 +6,11 @@ import {
   ErrorState,
   EmptyState,
   Badge,
-} from "../../../components/ui";
+} from "@/components/ui";
 import {
   useIncomingAccessRequests,
   useAccessRequestsToVote,
-} from "../../../hooks/useLegacyVault";
+} from "@/hooks/useLegacyVault";
 function RequestCard({ r, incoming }) {
   const owner = r.TrustedContact?.vault_owner?.email,
     delegate = r.TrustedContact?.delegate?.email;

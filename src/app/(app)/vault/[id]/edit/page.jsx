@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import {
   useVaultItems,
   useUpdateVaultItem,
-} from "../../../../../hooks/useLegacyVault";
+} from "@/../../hooks/useLegacyVault";
 
 import {
   Button,
@@ -19,7 +19,7 @@ import {
   Select,
   Loading,
   ErrorState,
-} from "../../../../../components/ui";
+} from "@/../../components/ui";
 
 const validationSchema = Yup.object({
   title: Yup.string()

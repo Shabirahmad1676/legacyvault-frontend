@@ -16,7 +16,7 @@ import {
   ArrowRightLeft,
 } from "lucide-react";
 
-import { clearSession, getUser } from "../lib/auth";
+import { clearSession, getUser } from "@/lib/auth";
 
 const nav = [
   {

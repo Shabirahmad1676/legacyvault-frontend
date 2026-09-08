@@ -17,14 +17,14 @@ import {
 import {
   useVaultItems,
   useDeleteVaultItem,
-} from "../../../../hooks/useLegacyVault";
+} from "@/../hooks/useLegacyVault";
 
 import {
   Button,
   Badge,
   Loading,
   ErrorState,
-} from "../../../../components/ui";
+} from "@/../components/ui";
 
 function getCategoryLabel(category) {
   const labels = {

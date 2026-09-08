@@ -5,14 +5,14 @@ import { Formik } from "formik";
 import { useRouter } from "next/navigation";
 import { AlertCircle, Mail } from "lucide-react";
 
-import AuthLayout from "../../components/auth/AuthLayout";
-import AuthInput from "../../components/auth/AuthInput";
-import PasswordInput from "../../components/auth/PasswordInput";
-import AuthButton from "../../components/auth/AuthButton";
+import AuthLayout from "@/components/auth/AuthLayout";
+import AuthInput from "@/components/auth/AuthInput";
+import PasswordInput from "@/components/auth/PasswordInput";
+import AuthButton from "@/components/auth/AuthButton";
 
-import { login } from "../../api/auth";
-import { setSession } from "../../lib/auth";
-import { loginSchema } from "../../schemas/forms";
+import { login } from "@/api/auth";
+import { setSession } from "@/lib/auth";
+import { loginSchema } from "@/schemas/forms";
 
 export default function LoginPage() {
   const router = useRouter();
