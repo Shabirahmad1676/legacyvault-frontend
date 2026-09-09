@@ -1,4 +1,6 @@
 "use client";
+
+import React from "react";
 import Link from "next/link";
 import {
   PageHeader,
@@ -11,23 +13,40 @@ import {
   useIncomingAccessRequests,
   useAccessRequestsToVote,
 } from "@/hooks/useLegacyVault";
+
 function RequestCard({ r, incoming }) {
-  const owner = r.TrustedContact?.vault_owner?.email,
-    delegate = r.TrustedContact?.delegate?.email;
+  const owner = r.TrustedContact?.vault_owner?.email;
+  const delegate = r.TrustedContact?.delegate?.email;
+  const isRejected = r.status === "rejected" || r.status === "denied";
+
   return (
-    <div className="lv-card p-5">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="font-bold">
-            {incoming ? delegate : owner || "Vault owner"}
+          <p className="font-bold text-[#0B1F18]">
+            {incoming ? (
+              <>
+                <span className="text-xs font-normal text-slate-400 block">
+                  Requested by
+                </span>
+                {delegate || "Trusted Contact"}
+              </>
+            ) : (
+              <>
+                <span className="text-xs font-normal text-slate-400 block">
+                  Vault Owner
+                </span>
+                {owner || "Vault Owner"}
+              </>
+            )}
           </p>
-          <p className="mt-1 text-sm text-slate-600">{r.reason}</p>
+          <p className="mt-2 text-sm text-slate-600">{r.reason}</p>
         </div>
         <Badge
           tone={
             r.status === "approved"
               ? "green"
-              : r.status === "rejected"
+              : isRejected
                 ? "red"
                 : r.status === "expired"
                   ? "neutral"
@@ -37,71 +56,101 @@ function RequestCard({ r, incoming }) {
           {r.status}
         </Badge>
       </div>
-      <div className="mt-4 grid gap-2 text-xs text-slate-500">
+
+      <div className="mt-4 grid gap-1 text-xs text-slate-500">
         <span>Created: {new Date(r.created_at).toLocaleString()}</span>
         <span>Expires: {new Date(r.expires_at).toLocaleString()}</span>
       </div>
-      {!incoming && (
+
+      <div className="mt-4 flex justify-end border-t border-slate-100 pt-3">
         <Link
           href={`/access-requests/${r.request_id}`}
-          className="mt-4 inline-flex rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+          className="inline-flex rounded-lg bg-[#063B2D] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#07503D]"
         >
-          Review & Vote
+          {incoming ? "View Audit Details" : "Review & Vote"}
         </Link>
-      )}
+      </div>
     </div>
   );
 }
-export default function AccessRequests() {
-  const a = useIncomingAccessRequests(),
-    v = useAccessRequestsToVote();
-  if (a.isLoading || v.isLoading)
-    return <Loading text="Loading emergency access requests…" />;
+
+export default function AccessRequestsPage() {
+  const a = useIncomingAccessRequests();
+  const v = useAccessRequestsToVote();
+
+  if (a.isLoading || v.isLoading) {
+    return <Loading text="Loading emergency access requests..." />;
+  }
+
   if (a.isError) return <ErrorState error={a.error} />;
   if (v.isError) return <ErrorState error={v.error} />;
+
+  const incomingRequests = a.data || [];
+  const votingRequests = v.data || [];
+
   return (
     <>
       <PageHeader
         eyebrow="Emergency access"
         title="Access Requests"
-        description="Review requests against your vault and decisions waiting for your vote."
+        description="Review emergency requests made against your vault and pending requests awaiting your vote."
         action={
           <Link
             href="/access-requests/new"
-            className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-bold text-white"
+            className="rounded-lg bg-[#063B2D] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#07503D]"
           >
             Request Access
           </Link>
         }
       />
+
       <div className="grid gap-6 lg:grid-cols-2">
+        {/* Incoming Requests (Vault Owner View) */}
         <section>
-          <h2 className="mb-3 text-lg font-bold">Incoming</h2>
-          {a.data.length ? (
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-600">
+              Requests for Your Vault
+            </h2>
+            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
+              {incomingRequests.length}
+            </span>
+          </div>
+
+          {incomingRequests.length ? (
             <div className="space-y-3">
-              {a.data.map((r) => (
-                <RequestCard key={r.request_id} r={r} incoming />
+              {incomingRequests.map((r) => (
+                <RequestCard key={r.request_id} r={r} incoming={true} />
               ))}
             </div>
           ) : (
             <EmptyState
               title="No incoming emergency requests."
-              description="Requests against your vault will appear here."
+              description="Requests submitted against your vault will appear here for audit tracking."
             />
           )}
         </section>
+
+        {/* Voting Requests (Trusted Contact View) */}
         <section>
-          <h2 className="mb-3 text-lg font-bold">Awaiting your vote</h2>
-          {v.data.length ? (
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-600">
+              Awaiting Your Vote
+            </h2>
+            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
+              {votingRequests.length}
+            </span>
+          </div>
+
+          {votingRequests.length ? (
             <div className="space-y-3">
-              {v.data.map((r) => (
-                <RequestCard key={r.request_id} r={r} />
+              {votingRequests.map((r) => (
+                <RequestCard key={r.request_id} r={r} incoming={false} />
               ))}
             </div>
           ) : (
             <EmptyState
-              title="No requests currently require your vote."
-              description="You are all caught up."
+              title="No requests require your vote."
+              description="You have no pending quorum votes from your trust network."
             />
           )}
         </section>

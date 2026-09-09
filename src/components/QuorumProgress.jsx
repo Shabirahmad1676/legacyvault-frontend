@@ -8,21 +8,20 @@ export function QuorumProgress({
   totalContacts = 0,
   status,
 }) {
-  const safeThreshold = Math.max(threshold, 1);
+  const isRejected = status === "rejected" || status === "denied";
+  const isApproved = status === "approved";
 
+  const safeThreshold = Math.max(threshold, 1);
   const percent = Math.min(
     100,
-    Math.round(
-      (approvals / safeThreshold) * 100
-    )
+    Math.round((approvals / safeThreshold) * 100)
   );
 
-  const label =
-    status === "approved"
-      ? "Access approved"
-      : status === "rejected"
-        ? "Request rejected"
-        : `${approvals} of ${threshold} approvals`;
+  const label = isApproved
+    ? "Access approved"
+    : isRejected
+      ? "Request rejected"
+      : `${approvals} of ${threshold} approvals`;
 
   return (
     <div className="space-y-3">
@@ -31,18 +30,16 @@ export function QuorumProgress({
           <p className="text-[10px] font-bold text-[#0B1F18]">
             Approval threshold
           </p>
-
           <p className="mt-0.5 text-[8px] text-[#718078]">
             {totalContacts} trusted contact
             {totalContacts === 1 ? "" : "s"} configured
           </p>
         </div>
-
         <Badge
           tone={
-            status === "approved"
+            isApproved
               ? "green"
-              : status === "rejected"
+              : isRejected
                 ? "red"
                 : "amber"
           }
@@ -50,7 +47,6 @@ export function QuorumProgress({
           {label}
         </Badge>
       </div>
-
       <div className="h-2 overflow-hidden rounded-full bg-[#E7EEE9]">
         <div
           className="h-full rounded-full bg-[#10B981] transition-all duration-500"
@@ -59,19 +55,16 @@ export function QuorumProgress({
           }}
         />
       </div>
-
       <p className="text-[8px] font-medium text-[#718078]">
-        {status === "approved"
+        {isApproved
           ? "The required approval threshold has been reached."
-          : status === "rejected"
+          : isRejected
             ? "The request was not approved."
             : `Waiting for ${Math.max(
                 0,
                 threshold - approvals
               )} more approval${
-                threshold - approvals === 1
-                  ? ""
-                  : "s"
+                threshold - approvals === 1 ? "" : "s"
               }.`}
       </p>
     </div>

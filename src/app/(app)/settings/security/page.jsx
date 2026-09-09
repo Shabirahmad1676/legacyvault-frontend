@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useState } from "react";
 import { Formik } from "formik";
 import { getUser, setSession } from "@/lib/auth";
 import { updateQuorum } from "@/api/auth";
@@ -10,12 +11,15 @@ import {
   Input,
   Button,
 } from "@/components/ui";
+
 export default function Security() {
-  const u = getUser(),
-    c = useTrustedContacts(),
-    [msg, setMsg] = useState(""),
-    [err, setErr] = useState("");
-  const initial = Math.max(1, u?.quorum_threshold || 1);
+  const u = getUser();
+  const c = useTrustedContacts();
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
+
+  const initial = Math.max(1, u?.quorum_threshold || 2);
+
   return (
     <>
       <PageHeader
@@ -25,10 +29,8 @@ export default function Security() {
       />
       <div className="lv-card max-w-2xl p-6">
         <div className="mb-6 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">
-          Current trusted contacts: <strong>{c.data?.length ?? "…"}</strong>.
-          The backend accepts any integer threshold ≥ 1, so the frontend will
-          also prevent a value above your current contact count when that count
-          is known.
+          Current trusted contacts: <strong>{c.data?.length ?? 0}</strong>.
+          The threshold must be at least 1 and no greater than the number of configured trusted contacts.
         </div>
         <Formik
           enableReinitialize
@@ -37,13 +39,21 @@ export default function Security() {
             setErr("");
             setMsg("");
             const n = Number(v.quorum_threshold);
+
+            if (n < 1) {
+              setErr("Quorum threshold must be at least 1.");
+              setSubmitting(false);
+              return;
+            }
+
             if (c.data?.length && n > c.data.length) {
               setErr(
-                "Threshold cannot exceed your current trusted-contact count for a meaningful quorum.",
+                `Threshold cannot exceed your current trusted-contact count (${c.data.length}).`
               );
               setSubmitting(false);
               return;
             }
+
             try {
               const r = await updateQuorum(n);
               const next = { ...u, quorum_threshold: r.data.quorum_threshold };
@@ -51,7 +61,7 @@ export default function Security() {
                 token: localStorage.getItem("legacyvault_token"),
                 user: next,
               });
-              setMsg("Quorum threshold updated.");
+              setMsg("Quorum threshold updated successfully.");
             } catch (e) {
               setErr(e.message);
             } finally {

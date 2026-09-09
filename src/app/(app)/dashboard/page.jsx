@@ -129,7 +129,7 @@ export default function Dashboard() {
       {/* Page heading */}
       <div className="mb-5">
         <h1 className="text-[22px] font-bold tracking-tight text-[#0B1F18] sm:text-[25px]">
-          Good morning, {displayName}
+          Good morning, <span className="text-slate-400">{displayName}</span> 
         </h1>
 
         <p className="mt-1 text-[10px] text-[#718078]">
