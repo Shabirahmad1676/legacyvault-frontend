@@ -46,8 +46,8 @@
   --color-scene-text: #F5F3FA;
   --color-scene-text-muted: #B7B2C9;
 
-  /* Typography */
-  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-brand), system-ui, -apple-system, sans-serif;
+
 
   /* Font sizes - Display */
   --text-display: 2rem;
