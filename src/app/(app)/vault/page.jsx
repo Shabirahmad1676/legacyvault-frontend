@@ -2,16 +2,9 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import {
-  Plus,
-  Search,
-  Vault,
-  LockKeyhole,
-} from "lucide-react";
+import { Plus, Search, LockKeyhole } from "lucide-react";
 
-import {
-  useVaultItems,
-} from "@/hooks/useLegacyVault";
+import { useVaultItems } from "@/hooks/useLegacyVault";
 
 import {
   Loading,
@@ -19,9 +12,7 @@ import {
   EmptyState,
 } from "@/components/ui";
 
-import {
-  VaultItemRow,
-} from "@/components/vault/VaultItemRow";
+import { VaultItemRow } from "@/components/vault/VaultItemRow";
 
 import {
   VaultListMotion,
@@ -55,10 +46,27 @@ const filters = [
 export default function VaultPage() {
   const query = useVaultItems();
 
-  const [activeFilter, setActiveFilter] =
-    useState("all");
-
+  const [activeFilter, setActiveFilter] = useState("all");
   const [search, setSearch] = useState("");
+
+  // Keep all hooks before any conditional return
+  const items = query.data || [];
+
+  const filteredItems = useMemo(() => {
+    const searchValue = search.trim().toLowerCase();
+
+    return items.filter((item) => {
+      const matchesCategory =
+        activeFilter === "all" ||
+        item.category === activeFilter;
+
+      const matchesSearch =
+        !searchValue ||
+        item.title?.toLowerCase().includes(searchValue);
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [items, activeFilter, search]);
 
   if (query.isLoading) {
     return (
@@ -74,30 +82,6 @@ export default function VaultPage() {
       />
     );
   }
-
-  const items = query.data || [];
-
-  const filteredItems = useMemo(() => {
-    return items.filter((item) => {
-      const matchesCategory =
-        activeFilter === "all" ||
-        item.category === activeFilter;
-
-      const searchValue =
-        search.trim().toLowerCase();
-
-      const matchesSearch =
-        !searchValue ||
-        item.title
-          ?.toLowerCase()
-          .includes(searchValue);
-
-      return (
-        matchesCategory &&
-        matchesSearch
-      );
-    });
-  }, [items, activeFilter, search]);
 
   return (
     <VaultPageMotion>
@@ -257,7 +241,7 @@ export default function VaultPage() {
         </div>
       )}
 
-      {/* Small security footer */}
+      {/* Security footer */}
       {items.length > 0 && (
         <div className="mt-4 flex items-center gap-2 text-[8px] text-[#829089]">
           <LockKeyhole className="h-3 w-3 text-[#087653]" />

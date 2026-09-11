@@ -1,53 +1,5 @@
 "use client";
 
-import { useAssignedVaults } from "@/hooks/useLegacyVault";
-import { Loading, ErrorState, EmptyState } from "@/components/ui";
-// import { SharedVaultCard } from "@/components/vault/SharedVaultCard";
-
-export default function SharedVaultsPage() {
-  const { data: assignedVaults = [], isLoading, isError, error, refetch } = useAssignedVaults();
-
-  if (isLoading) {
-    return <Loading text="Fetching trusted networks..." />;
-  }
-
-  if (isError) {
-    return <ErrorState error={error} retry={refetch} />;
-  }
-
-  return (
-    <div className="mx-auto max-w-6xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-          Shared Vaults
-        </h1>
-        <p className="mt-2 text-sm text-slate-500 max-w-2xl">
-          Vaults belonging to family members and clients where you are registered as part of the trusted network.
-        </p>
-      </div>
-
-      {assignedVaults.length === 0 ? (
-        <EmptyState
-          title="No shared vaults."
-          description="You have not been added as a trusted contact to any emergency recovery plans yet."
-        />
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 items-stretch">
-          {assignedVaults.map((link) => (
-            <SharedVaultCard key={link.trust_link_id} link={link} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-
-
-
-//
-
-
 import Link from "next/link";
 import { Lock, FileText, ChevronRight } from "lucide-react";
 import { useSharedVaultItems } from "@/hooks/useLegacyVault";

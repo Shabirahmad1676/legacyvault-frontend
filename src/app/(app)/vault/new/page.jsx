@@ -12,11 +12,11 @@ import {
 
 import {
   vaultSchema,
-} from "@/../schemas/forms";
+} from "@/schemas/forms";
 
 import {
   useCreateVaultItem,
-} from "@/../hooks/useLegacyVault";
+} from "@/hooks/useLegacyVault";
 
 import {
   Field,
@@ -24,11 +24,11 @@ import {
   Textarea,
   Select,
   Button,
-} from "@/../components/ui";
+} from "@/components/ui";
 
 import {
   VaultPageMotion,
-} from "@/../components/vault/VaultPageMotion";
+} from "@/components/vault/VaultPageMotion";
 
 export default function NewVaultItem() {
   const router = useRouter();
@@ -191,7 +191,7 @@ export default function NewVaultItem() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   placeholder="Enter the information you want to protect..."
-                  className="min-h-[150px]"
+                  // className="min-h-[150px]"
                 />
               </Field>
 
