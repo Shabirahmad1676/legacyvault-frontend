@@ -2,7 +2,7 @@
 
 import { Formik } from "formik";
 import { useState } from "react";
-import { contactSchema } from "@/schemas/forms";
+import { contactSchema } from "@/schemas";
 
 import {
   useTrustedContacts,

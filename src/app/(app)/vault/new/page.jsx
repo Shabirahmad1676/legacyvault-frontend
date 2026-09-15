@@ -12,7 +12,7 @@ import {
 
 import {
   vaultSchema,
-} from "@/schemas/forms";
+} from "@/schemas";
 
 import {
   useCreateVaultItem,

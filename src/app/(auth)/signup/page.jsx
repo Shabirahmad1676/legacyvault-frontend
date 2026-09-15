@@ -16,7 +16,7 @@ import AuthButton from "@/components/auth/AuthButton";
 
 import { signup } from "@/api/auth";
 import { setSession } from "@/lib/auth";
-import { signupSchema } from "@/schemas/forms";
+import { signupSchema } from "@/schemas";
 
 export default function SignupPage() {
   const router = useRouter();
