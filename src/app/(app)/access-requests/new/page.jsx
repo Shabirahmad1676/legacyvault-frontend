@@ -3,7 +3,7 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Formik } from "formik";
-import { requestSchema } from "@/schemas/forms";
+import { requestSchema } from "@/schemas";
 import { useCreateAccessRequest, useAssignedVaults } from "@/hooks/useLegacyVault";
 import { Loading, ErrorState } from "@/components/ui";
 

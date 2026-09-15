@@ -12,7 +12,7 @@ import AuthButton from "@/components/auth/AuthButton";
 
 import { login } from "@/api/auth";
 import { setSession } from "@/lib/auth";
-import { loginSchema } from "@/schemas/forms";
+import { loginSchema } from "@/schemas";
 
 export default function LoginPage() {
   const router = useRouter();

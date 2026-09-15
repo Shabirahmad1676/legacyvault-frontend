@@ -1,47 +1,50 @@
+import axios from "axios";
 import { getToken, clearSession } from "@/lib/auth";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
 
-export async function apiRequest(path, options = {}) {
-  const headers = { 
-    ...(options.body ? { "Content-Type": "application/json" } : {}), 
-    ...(options.headers || {}) 
-  };
-  
+const apiClient = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+apiClient.interceptors.request.use((config) => {
   const token = getToken();
-  if (token) headers.Authorization = `Bearer ${token}`;
-
-  const response = await fetch(`${BASE_URL}${path}`, {
-    ...options,
-    headers,
-    cache: "no-store"
-  });
-
-  // ✅ Fix: Initialize as an empty object structure to prevent deep downstream undefined crashes
-  let payload = { data: [] }; 
-  try { 
-    const textData = await response.text();
-    // Only attempt JSON parsing if there is an actual text payload present
-    if (textData) {
-      payload = JSON.parse(textData);
-    }
-  } catch (err) {
-    console.warn("Failed to parse response payload layout:", err);
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
+  return config;
+});
 
-  if (response.status === 401) {
-    clearSession();
-    if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
-      window.location.href = "/login";
+apiClient.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    if (error.response?.status === 401) {
+      clearSession();
+      if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+        window.location.href = "/login";
+      }
     }
+    const customError = new Error(error.response?.data?.message || "Something went wrong.");
+    customError.status = error.response?.status;
+    customError.payload = error.response?.data;
+    throw customError;
   }
+);
 
-  if (!response.ok) {
-    const error = new Error(payload?.message || "Something went wrong.");
-    error.status = response.status;
-    error.payload = payload;
+export async function apiRequest(path, options = {}) {
+  const { method = "GET", body, headers = {} } = options;
+  try {
+    const response = await apiClient({
+      url: path,
+      method,
+      data: body,
+      headers,
+    });
+    return response;
+  } catch (error) {
     throw error;
   }
-  
-  return payload;
 }
