@@ -17,7 +17,8 @@ import {
   useSharedVaultItems, 
   useAssignedVaults, 
   useIncomingAccessRequests, 
-  useAccessRequestsToVote 
+  useAccessRequestsToVote,
+  useOutgoingAccessRequests 
 } from "@/hooks/useLegacyVault";
 import { Loading, ErrorState, Modal } from "@/components/ui";
 
@@ -49,10 +50,15 @@ export default function OwnerSharedVaultPage({ params }) {
   
   const incomingReqs = useIncomingAccessRequests();
   const votingReqs = useAccessRequestsToVote();
-  const allReqs = [...(incomingReqs.data || []), ...(votingReqs.data || [])];
+  const outgoingReqs = useOutgoingAccessRequests();
+  const allReqs = [
+    ...(incomingReqs.data || []),
+    ...(votingReqs.data || []),
+    ...(outgoingReqs.data || [])
+  ];
   
   const activeRequest = allReqs.find(
-    (r) => r.TrustedContact?.owner_id === ownerId && r.status === "pending"
+    (r) => r.TrustedContact?.owner_id === ownerId && (r.status === "pending" || r.status === "approved")
   );
 
   const currentVault = assigned.find((v) => v.owner_id === ownerId);

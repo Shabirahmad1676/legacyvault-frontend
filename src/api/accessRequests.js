@@ -7,3 +7,4 @@ export const createAccessRequest = (body) =>
 export const getIncomingRequests = () =>
   apiRequest("/access-requests/incoming");
 export const getRequestsToVote = () => apiRequest("/access-requests/to-vote");
+export const getOutgoingRequests = () => apiRequest("/access-requests/outgoing");

@@ -73,12 +73,19 @@ export function useAccessRequestsToVote() {
     queryFn: async () => data(await requests.getRequestsToVote()),
   });
 }
+export function useOutgoingAccessRequests() {
+  return useQuery({
+    queryKey: ["outgoing-access-requests"],
+    queryFn: async () => data(await requests.getOutgoingRequests()),
+  });
+}
 export function useCreateAccessRequest() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: requests.createAccessRequest,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["access-requests-to-vote"] });
+      qc.invalidateQueries({ queryKey: ["outgoing-access-requests"] });
     },
   });
 }
@@ -90,7 +97,9 @@ export function useVoteOnAccessRequest() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["access-requests-to-vote"] });
       qc.invalidateQueries({ queryKey: ["incoming-access-requests"] });
+      qc.invalidateQueries({ queryKey: ["outgoing-access-requests"] });
       qc.invalidateQueries({ queryKey: ["activity-logs"] });
+      qc.invalidateQueries({ queryKey: ["sharedVaultItems"] });
     },
   });
 }
