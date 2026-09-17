@@ -5,29 +5,32 @@ import Link from "next/link";
 import { 
   useIncomingAccessRequests, 
   useAccessRequestsToVote, 
+  useOutgoingAccessRequests,
   useVoteOnAccessRequest 
 } from "@/hooks/useLegacyVault";
 import { getUser } from "@/lib/auth";
 import { Loading, ErrorState, EmptyState } from "@/components/ui";
 
 export default function AccessRequestsPage() {
-  const [activeTab, setActiveTab] = useState("all"); // "all", "incoming", "to-vote"
+  const [activeTab, setActiveTab] = useState("all"); // "all", "incoming", "to-vote", "outgoing"
 
   const incomingQuery = useIncomingAccessRequests();
   const votingQuery = useAccessRequestsToVote();
+  const outgoingQuery = useOutgoingAccessRequests();
   const voteMutation = useVoteOnAccessRequest();
   const currentUser = getUser();
 
-  if (incomingQuery.isLoading || votingQuery.isLoading) {
+  if (incomingQuery.isLoading || votingQuery.isLoading || outgoingQuery.isLoading) {
     return <Loading text="Loading access requests..." />;
   }
 
-  if (incomingQuery.isError || votingQuery.isError) {
-    return <ErrorState error={incomingQuery.error || votingQuery.error} />;
+  if (incomingQuery.isError || votingQuery.isError || outgoingQuery.isError) {
+    return <ErrorState error={incomingQuery.error || votingQuery.error || outgoingQuery.error} />;
   }
 
   const incomingRequests = incomingQuery.data || [];
   const votingRequests = votingQuery.data || [];
+  const outgoingRequests = outgoingQuery.data || [];
 
   const handleQuickVote = async (requestId, decision, e) => {
     e.preventDefault();
@@ -47,22 +50,44 @@ export default function AccessRequestsPage() {
           Access Requests
         </h1>
         <p className="mt-2 text-sm text-slate-500">
-          Review, approve, or object to emergency vault unlock requests.
+          Review, approve, or track emergency vault unlock requests.
         </p>
       </div>
 
       {/* Pill Toggle Filters */}
-      <div className="mb-8 flex items-center gap-3">
+      <div className="mb-8 flex flex-wrap items-center gap-3">
         <button
           type="button"
-          onClick={() => setActiveTab("incoming")}
+          onClick={() => setActiveTab("all")}
           className={`rounded-full px-5 py-2.5 text-xs font-semibold transition ${
-            activeTab === "incoming" || activeTab === "all"
+            activeTab === "all"
               ? "bg-[#0B3B2C] text-white shadow-sm"
               : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
           }`}
         >
-          Incoming (Active)
+          All Activity
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("outgoing")}
+          className={`rounded-full px-5 py-2.5 text-xs font-semibold transition ${
+            activeTab === "outgoing"
+              ? "bg-[#0B3B2C] text-white shadow-sm"
+              : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+          }`}
+        >
+          My Requests ({outgoingRequests.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("incoming")}
+          className={`rounded-full px-5 py-2.5 text-xs font-semibold transition ${
+            activeTab === "incoming"
+              ? "bg-[#0B3B2C] text-white shadow-sm"
+              : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+          }`}
+        >
+          Incoming for My Vault ({incomingRequests.length})
         </button>
         <button
           type="button"
@@ -73,7 +98,7 @@ export default function AccessRequestsPage() {
               : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
           }`}
         >
-          To Vote (Pending Review)
+          To Vote ({votingRequests.length})
         </button>
       </div>
 
@@ -262,6 +287,114 @@ export default function AccessRequestsPage() {
                         >
                           View Full Verification Progress &rarr;
                         </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* COLUMN: My Outgoing Requests (When tab is outgoing) */}
+        {activeTab === "outgoing" && (
+          <div className="lg:col-span-2">
+            <h2 className="mb-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Emergency Access Petitions You Submitted
+            </h2>
+
+            {outgoingRequests.length === 0 ? (
+              <EmptyState
+                title="No outgoing requests"
+                description="You have not submitted any emergency access requests to shared vaults."
+                action={
+                  <Link
+                    href="/shared-vaults"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-[#0B3B2C] px-4 py-2 text-xs font-semibold text-white hover:bg-[#08503B]"
+                  >
+                    Browse Shared Vaults &rarr;
+                  </Link>
+                }
+              />
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2">
+                {outgoingRequests.map((r) => {
+                  const owner = r.TrustedContact?.vault_owner;
+                  const ownerName = owner?.username || owner?.email?.split("@")[0] || "Vault Owner";
+                  const votes = r.votes || r.Votes || [];
+                  const approvals = votes.filter((v) => v.decision === "approve").length;
+                  const threshold = owner?.quorum_threshold || 2;
+                  const isApproved = r.status === "approved";
+                  const isDenied = r.status === "denied";
+                  const isExpired = r.status === "expired";
+
+                  return (
+                    <div
+                      key={r.request_id}
+                      className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-sm flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 capitalize">
+                              Petition for {ownerName}&apos;s Vault
+                            </h3>
+                            <p className="mt-1 text-xs text-slate-400">
+                              Owner: {owner?.email}
+                            </p>
+                          </div>
+
+                          <span
+                            className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                              isApproved
+                                ? "bg-emerald-50 text-emerald-700"
+                                : isDenied
+                                ? "bg-red-50 text-red-700"
+                                : isExpired
+                                ? "bg-slate-100 text-slate-600"
+                                : "bg-amber-50 text-amber-700"
+                            }`}
+                          >
+                            {isApproved
+                              ? "Approved (Unlocked)"
+                              : isDenied
+                              ? "Denied"
+                              : isExpired
+                              ? "Expired"
+                              : `Pending (${approvals}/${threshold} Approvals)`}
+                          </span>
+                        </div>
+
+                        <div className="mt-4 border-t border-slate-100 pt-3">
+                          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                            Reason Given
+                          </p>
+                          <p className="mt-1 text-xs text-slate-700 italic">
+                            &ldquo;{r.reason}&rdquo;
+                          </p>
+                        </div>
+
+                        <div className="mt-4 text-xs text-slate-400">
+                          <span>Submitted on: {new Date(r.created_at).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+
+                      <div className="mt-6 flex items-center gap-3 pt-3 border-t border-slate-100">
+                        {isApproved ? (
+                          <Link
+                            href={`/shared-vaults/${r.TrustedContact?.owner_id}`}
+                            className="flex-1 text-center rounded-xl bg-[#09B172] py-2.5 text-xs font-semibold text-white transition hover:bg-[#079962]"
+                          >
+                            Open Unlocked Vault &rarr;
+                          </Link>
+                        ) : (
+                          <Link
+                            href={`/access-requests/${r.request_id}`}
+                            className="flex-1 text-center rounded-xl border border-slate-200 py-2.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+                          >
+                            View Audit Details
+                          </Link>
+                        )}
                       </div>
                     </div>
                   );

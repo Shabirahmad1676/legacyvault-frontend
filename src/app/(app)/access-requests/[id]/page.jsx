@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { 
   useAccessRequestsToVote, 
   useIncomingAccessRequests, 
+  useOutgoingAccessRequests,
   useVoteOnAccessRequest,
   useSharedVaultItems 
 } from "@/hooks/useLegacyVault";
@@ -19,17 +20,19 @@ export default function RequestDetailsPage() {
 
   const votingQuery = useAccessRequestsToVote();
   const incomingQuery = useIncomingAccessRequests();
+  const outgoingQuery = useOutgoingAccessRequests();
   const voteMutation = useVoteOnAccessRequest();
 
   const [confirmDecision, setConfirmDecision] = useState(null);
 
-  if (votingQuery.isLoading || incomingQuery.isLoading) {
+  if (votingQuery.isLoading || incomingQuery.isLoading || outgoingQuery.isLoading) {
     return <Loading text="Loading verification details..." />;
   }
 
   const allRequests = [
     ...(votingQuery.data || []),
     ...(incomingQuery.data || []),
+    ...(outgoingQuery.data || []),
   ];
 
   const request = allRequests.find((x) => x.request_id === id);
@@ -68,13 +71,21 @@ export default function RequestDetailsPage() {
         &larr; Back to All Requests
       </Link>
 
-      {/* Main Header with Safety Delay Pill */}
+      {/* Main Header with Status Pill */}
       <div className="mb-8 flex flex-wrap items-center gap-4">
         <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
           Emergency Access Request
         </h1>
-        <span className="rounded-full border border-amber-300 bg-amber-50 px-3.5 py-1 text-xs font-semibold text-amber-800">
-          24h Safety Delay Active
+        <span className={`rounded-full px-3.5 py-1 text-xs font-semibold ${
+          request.status === "approved"
+            ? "bg-emerald-50 text-emerald-800 border border-emerald-300"
+            : request.status === "denied"
+            ? "bg-red-50 text-red-800 border border-red-300"
+            : request.status === "expired"
+            ? "bg-slate-100 text-slate-700 border border-slate-300"
+            : "bg-amber-50 text-amber-800 border border-amber-300"
+        }`}>
+          Status: {request.status.toUpperCase()}
         </span>
       </div>
 
@@ -96,9 +107,8 @@ export default function RequestDetailsPage() {
                 </div>
               </div>
 
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">
-                <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
-                46 hours remaining
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                Expires: {new Date(request.expires_at).toLocaleDateString()}
               </span>
             </div>
 
@@ -216,33 +226,38 @@ export default function RequestDetailsPage() {
             </div>
           </div>
 
-          {/* Card 2: Preview if Quorum Reached Container */}
+          {/* Card 2: Status & Vault Access Info */}
           <div className="rounded-3xl bg-[#063B2D] p-7 text-white shadow-md">
             <div className="flex items-center justify-between gap-4">
               <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
-                Preview if Quorum Reached
+                {request.status === "approved" ? "Consensus Reached" : "Quorum Protection"}
               </span>
-              <span className="rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
-                Access Approved
+              <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                request.status === "approved" ? "bg-emerald-500/20 text-emerald-300" : "bg-amber-500/20 text-amber-300"
+              }`}>
+                {request.status.toUpperCase()}
               </span>
             </div>
 
             <h4 className="mt-4 text-sm font-bold tracking-wide">
-              QUORUM REACHED, ACCESS APPROVED
+              {request.status === "approved" ? "VAULT UNLOCKED & DECRYPTED" : "EMERGENCY CONSENSUS REQUIRED"}
             </h4>
             <p className="mt-2 text-xs leading-relaxed text-white/70">
-              Upon the required approvals, the following primary vault payloads will
-              automatically decrypt for {requesterName}:
+              {request.status === "approved"
+                ? `The required multi-party quorum has agreed. Encrypted items are now unlocked for ${requesterName}.`
+                : `Sensitive vault payloads require independent approvals from designated trusted contacts before access is granted.`}
             </p>
 
-            <ul className="mt-4 space-y-2 text-xs font-medium text-emerald-300">
-              <li className="flex items-center gap-2">
-                &bull; <span>Primary Vault Financial Credentials</span>
-              </li>
-              <li className="flex items-center gap-2">
-                &bull; <span>United Trust Health Directives & Documents</span>
-              </li>
-            </ul>
+            {request.status === "approved" && (
+              <div className="mt-5">
+                <Link
+                  href={`/shared-vaults/${request.TrustedContact?.owner_id}`}
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#09B172] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#079962]"
+                >
+                  Open Unlocked Shared Vault &rarr;
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
